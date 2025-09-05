@@ -132,9 +132,6 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const encoder = new TextEncoder();
             console.log(`Sending command: ${command}`);
-            if (command === 'send_log') {
-                logDataTextArea.value = "Requesting log file...\n";
-            }
             await commandCharacteristic.writeValue(encoder.encode(command));
             console.log('Command sent successfully.');
         } catch(error) {
@@ -178,28 +175,36 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function processStatusData(statusString) {
-        // Example status: "SoC: 98.5%, V: 25.40V, I: 0.10A"
+        const data = {};
         const parts = statusString.split(',');
-        let data = {};
         parts.forEach(part => {
-            const [key, value] = part.split(':');
+            const [key, ...valueParts] = part.split(':');
+            const value = valueParts.join(':');
             if (key && value) {
-                const trimmedKey = key.trim();
-                const trimmedValue = value.trim();
-                if (trimmedKey === 'SoC') data.batteryPercentage = parseFloat(trimmedValue);
-                if (trimmedKey === 'V') data.batteryVoltage = parseFloat(trimmedValue);
-                if (trimmedKey === 'I') data.batteryCurrent = parseFloat(trimmedValue);
+                data[key.trim()] = value.trim();
             }
         });
 
-        // This is a simplified version of the original processData function
-        // It can be expanded to parse more complex data if needed.
-        if (data.batteryPercentage !== undefined) {
-            updateGauge('batteryGauge', data.batteryPercentage);
-            document.getElementById("batteryValue").innerHTML = data.batteryPercentage.toFixed(0);
+        // Battery Health
+        if (data.SoC !== undefined) {
+            const soc = parseFloat(data.SoC);
+            updateGauge('batteryGauge', soc);
+            document.getElementById("batteryValue").innerHTML = soc.toFixed(0);
         }
-        document.getElementById("batteryVoltage").innerHTML = data.batteryVoltage !== undefined ? data.batteryVoltage.toFixed(2) : "N/A";
-        document.getElementById("batteryCurrent").innerHTML = data.batteryCurrent !== undefined ? data.batteryCurrent.toFixed(2) : "N/A";
+        document.getElementById("batteryVoltage").innerHTML = data.V !== undefined ? parseFloat(data.V).toFixed(2) : "N/A";
+        document.getElementById("batteryCurrent").innerHTML = data.I !== undefined ? parseFloat(data.I).toFixed(2) : "N/A";
+
+        // Work Monitor
+        if (data.PlatformLoad !== undefined) {
+            const platformLoad = parseFloat(data.PlatformLoad);
+            // Assuming SWL is available from a previous data load or a constant
+            const swl = parseFloat(document.getElementById('swlDisplay').textContent) || 3300;
+            updateGauge('platformLoadGauge', platformLoad, swl);
+            document.getElementById("platformLoadValue").innerHTML = platformLoad.toFixed(0);
+        }
+        document.getElementById("cycleStatusValue").innerHTML = data.CycleStatus || "N/A";
+        document.getElementById("avgLoadLife").innerHTML = data.AvgLoad !== undefined ? parseFloat(data.AvgLoad).toFixed(1) : "N/A";
+        document.getElementById("workLife").innerHTML = data.WorkLife !== undefined ? parseFloat(data.WorkLife).toFixed(2) : "N/A";
     }
 
     function updateGauge(gaugeId, value, max_val = 100) {
