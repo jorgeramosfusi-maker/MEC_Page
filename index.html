@@ -94,5 +94,64 @@
   </div>
 
   <script src="script.js"></script>
+
+  <div class="button-container">
+      <button class="button back-button" id="toggleDiagnosticsButton">Show Diagnostics</button>
+  </div>
+
+  <div id="diagnosticsSection" style="display: none;">
+      <h1 class="header">Live Diagnostics</h1>
+      <div class="info-bar">
+        <span>Date: <b id="diagDate">--</b></span>
+        <span>Time: <b id="diagTime">--</b></span>
+        <div>Runtime: <b id="diagRuntime">--</b></div>
+      </div>
+      <table class="data-table" id="liveDataTable">
+        <thead><tr><th>Parameter</th><th>Value</th></tr></thead>
+        <tbody>
+          <tr class="group-header"><td colspan="2">Load</td></tr>
+          <tr><td>Pressure Sensor (raw ADC)</td><td id="pressureSensorRaw">N/A</td></tr>
+          <tr><td>Pressure Sensor (mA)</td><td id="pressurema">N/A</td></tr>
+          <tr><td>Pressure (PSI)</td><td id="pressurePsi">N/A</td></tr>
+          <tr><td>Pressure (BAR)</td><td id="pressureBar">N/A</td></tr>
+          <tr><td>Platform Load (Lb)</td><td id="livePlatformLoadLb">N/A</td></tr>
+          <tr><td>Work This Cycle (Wh)</td><td id="workThisCycle">N/A</td></tr>
+          <tr><td>Avg Load Life</td><td id="diagAvgLoadLife">N/A</td></tr>
+          <tr class="group-header"><td colspan="2">Battery</td></tr>
+          <tr><td>Battery Voltage Pin (raw ADC)</td><td id="batteryVoltagePin">N/A</td></tr>
+          <tr><td>Battery Voltage (V)</td><td id="liveBatteryVoltage">N/A</td></tr>
+          <tr class="group-header"><td colspan="2">Current Measurement</td></tr>
+          <tr><td>Shunt Battery Side (mV)</td><td id="ShuntBatterySide">N/A</td></tr>
+          <tr><td>Shunt Motor Side (mV)</td><td id="ShuntMotorSide">N/A</td></tr>
+          <tr><td>Shunt Voltage Drop (mV)</td><td id="shuntVoltageDrop">N/A</td></tr>
+          <tr><td><strong>Calculated Current (A)</strong></td><td id="diagBatteryCurrent"><strong>N/A</strong></td></tr>
+          <tr class="group-header"><td colspan="2">Oil</td></tr>
+          <tr><td>Oil Temperature (raw ADC)</td><td id="oilraw">N/A</td></tr>
+          <tr><td>Oil Temperature (°C)</td><td id="liveOilTemp">N/A</td></tr>
+          <tr class="group-header"><td colspan="2">Cycles</td></tr>
+          <tr><td>Total Lift Cycles</td><td id="diagLiftCycles">N/A</td></tr>
+          <tr><td>Up Cycles</td><td id="liveUpCycles">N/A</td></tr>
+          <tr><td>Down Cycles</td><td id="liveDownCycles">N/A</td></tr>
+          <tr><td>Cycles Status</td><td id="cycle_statusLive">Idle</td></tr>
+          <tr class="group-header"><td colspan="2">Digital Inputs</td></tr>
+          <tr><td>Pump Running</td><td id="pumpRunning">N/A</td></tr>
+          <tr><td>Aux Pump</td><td id="auxPump">N/A</td></tr>
+          <tr><td>Up/Down Button</td><td id="upDownButton">N/A</td></tr>
+          <tr><td>Open/Close Input</td><td id="openClose">N/A</td></tr>
+          <tr><td>Oil Level</td><td id="oilLevel">N/A</td></tr>
+          <tr class="group-header"><td colspan="2">Filesystem</td></tr>
+          <tr><td>Data Log Size</td><td id="dataLogSize">N/A</td></tr>
+          <tr><td>Averages Log Size</td><td id="averagesLogSize">N/A</td></tr>
+          <tr><td>Alarm Log Size</td><td id="alarmLogSize">N/A</td></tr>
+          <tr><td>Total FS Size</td><td id="totalFSSize">N/A</td></tr>
+        </tbody>
+      </table>
+      <div class="button-container">
+        <button class="button delete-button" id="deleteDataLog">Delete Data Log</button>
+        <button class="button delete-button" id="deleteAvgLog">Delete Averages Log</button>
+        <button class="button delete-button" id="deleteAlarmLog">Delete Alarm Log</button>
+        <button class="button reboot-button" id="rebootButton">Reboot Unit</button>
+      </div>
+  </div>
 </body>
 </html>

@@ -25,7 +25,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let otaFwCharacteristic;
     let otaCmdCharacteristic;
+    let diagnosticsCharacteristic;
     let statusInterval;
+    let diagnosticsInterval;
 
     const updateFirmwareButton = document.getElementById('updateFirmwareButton');
     const firmwareFileInput = document.getElementById('firmwareFile');
@@ -33,8 +35,97 @@ document.addEventListener('DOMContentLoaded', () => {
     connectButton.addEventListener('click', connectToDevice);
     getLogButton.addEventListener('click', () => sendCommand('send_log'));
     clearLogsButton.addEventListener('click', () => sendCommand('clear_logs'));
+    const toggleDiagnosticsButton = document.getElementById('toggleDiagnosticsButton');
+    const diagnosticsSection = document.getElementById('diagnosticsSection');
+    const deleteDataLogButton = document.getElementById('deleteDataLog');
+    const deleteAvgLogButton = document.getElementById('deleteAvgLog');
+    const deleteAlarmLogButton = document.getElementById('deleteAlarmLog');
+    const rebootButton = document.getElementById('rebootButton');
+
     updateFirmwareButton.addEventListener('click', () => firmwareFileInput.click());
     firmwareFileInput.addEventListener('change', handleFirmwareFile);
+    toggleDiagnosticsButton.addEventListener('click', toggleDiagnostics);
+    deleteDataLogButton.addEventListener('click', () => sendCommand('delete_datalog'));
+    deleteAvgLogButton.addEventListener('click', () => sendCommand('delete_avglog'));
+    deleteAlarmLogButton.addEventListener('click', () => sendCommand('delete_alarmlog'));
+    rebootButton.addEventListener('click', () => {
+        if(confirm("Are you sure you want to reboot the device?")) {
+            sendCommand('reboot');
+        }
+    });
+
+
+    function toggleDiagnostics() {
+        if (diagnosticsSection.style.display === 'none') {
+            diagnosticsSection.style.display = 'block';
+            toggleDiagnosticsButton.textContent = 'Hide Diagnostics';
+            readDiagnosticsData(); // Initial read
+            diagnosticsInterval = setInterval(readDiagnosticsData, 500);
+        } else {
+            diagnosticsSection.style.display = 'none';
+            toggleDiagnosticsButton.textContent = 'Show Diagnostics';
+            clearInterval(diagnosticsInterval);
+        }
+    }
+
+    async function readDiagnosticsData() {
+        if (!diagnosticsCharacteristic) return;
+        try {
+            const value = await diagnosticsCharacteristic.readValue();
+            const decoder = new TextDecoder('utf-8');
+            const jsonString = decoder.decode(value);
+            const data = JSON.parse(jsonString);
+            processDiagnosticsData(data);
+        } catch(error) {
+            console.error('Error reading diagnostics data:', error);
+        }
+    }
+
+    function processDiagnosticsData(data) {
+        // This function populates the diagnostics table
+        document.getElementById("diagDate").innerHTML = data.date || "N/A";
+        document.getElementById("diagTime").innerHTML = data.time || "N/A";
+        document.getElementById("diagRuntime").innerHTML = data.runtime || "N/A";
+        document.getElementById("pressureSensorRaw").innerHTML = data.pressureSensorRaw !== undefined ? data.pressureSensorRaw : "N/A";
+        document.getElementById("pressurema").innerHTML = data.pressurema !== undefined ? data.pressurema.toFixed(2) : "N/A";
+        document.getElementById("pressurePsi").innerHTML = data.pressurePsi !== undefined ? data.pressurePsi : "N/A";
+        document.getElementById("pressureBar").innerHTML = data.pressureBar !== undefined ? data.pressureBar.toFixed(2) : "N/A";
+        document.getElementById("livePlatformLoadLb").innerHTML = data.platformLoad !== undefined ? data.platformLoad : "N/A";
+        document.getElementById("workThisCycle").innerHTML = data.workThisCycle !== undefined ? data.workThisCycle.toFixed(4) : "N/A";
+        document.getElementById("diagAvgLoadLife").innerHTML = data.avgLoadLife !== undefined ? data.avgLoadLife.toFixed(2) : "N/A";
+        document.getElementById("batteryVoltagePin").innerHTML = data.batteryVoltagePin !== undefined ? data.batteryVoltagePin : "N/A";
+        document.getElementById("liveBatteryVoltage").innerHTML = data.liveBatteryVoltage !== undefined ? data.liveBatteryVoltage.toFixed(2) : "N/A";
+        document.getElementById("ShuntBatterySide").innerHTML = data.ShuntBatterySide !== undefined ? data.ShuntBatterySide.toFixed(2) : "N/A";
+        document.getElementById("ShuntMotorSide").innerHTML = data.ShuntMotorSide !== undefined ? data.ShuntMotorSide.toFixed(2) : "N/A";
+        document.getElementById("shuntVoltageDrop").innerHTML = data.shuntVoltageDrop !== undefined ? data.shuntVoltageDrop.toFixed(4) : "N/A";
+        document.getElementById("diagBatteryCurrent").innerHTML = data.batteryCurrent !== undefined ? `<strong>${data.batteryCurrent.toFixed(2)}</strong>` : "N/A";
+        document.getElementById("oilraw").innerHTML = data.oilraw !== undefined ? data.oilraw : "N/A";
+        document.getElementById("liveOilTemp").innerHTML = data.oilTemp !== undefined ? data.oilTemp.toFixed(2) : "N/A";
+        document.getElementById("diagLiftCycles").innerHTML = data.liftCycles !== undefined ? data.liftCycles : "N/A";
+        document.getElementById("liveUpCycles").innerHTML = data.upCycles !== undefined ? data.upCycles : "N/A";
+        document.getElementById("liveDownCycles").innerHTML = data.downCycles !== undefined ? data.downCycles : "N/A";
+        document.getElementById("cycle_statusLive").innerHTML = data.cycle_statusLive || "Idle";
+
+        const pumpRunningEl = document.getElementById("pumpRunning"); pumpRunningEl.innerHTML = data.pumpRunning || "N/A";
+        const auxPumpEl = document.getElementById("auxPump"); auxPumpEl.innerHTML = data.auxPump || "N/A";
+        const upDownButtonEl = document.getElementById("upDownButton"); upDownButtonEl.innerHTML = data.upDownButton || "N/A";
+        const openCloseEl = document.getElementById("openClose"); openCloseEl.innerHTML = data.openClose || "N/A";
+        const oilLevelEl = document.getElementById("oilLevel"); oilLevelEl.innerHTML = data.oilLevel || "N/A";
+
+        document.getElementById("dataLogSize").innerHTML = data.dataLogSize !== undefined ? formatBytes(data.dataLogSize) : "N/A";
+        document.getElementById("averagesLogSize").innerHTML = data.averagesLogSize !== undefined ? formatBytes(data.averagesLogSize) : "N/A";
+        document.getElementById("alarmLogSize").innerHTML = data.alarmLogSize !== undefined ? formatBytes(data.alarmLogSize) : "N/A";
+        document.getElementById("totalFSSize").innerHTML = data.totalFSSize !== undefined ? formatBytes(data.totalFSSize) : "N/A";
+    }
+
+    function formatBytes(bytes, decimals = 2) {
+        if (!bytes || bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const dm = decimals < 0 ? 0 : decimals;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+    }
 
     function handleFirmwareFile(event) {
         const file = event.target.files[0];
@@ -73,6 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
             statusCharacteristic = await service.getCharacteristic(DEVICE_STATUS_CHARACTERISTIC_UUID);
             logDataCharacteristic = await service.getCharacteristic(LOG_DATA_CHARACTERISTIC_UUID);
             commandCharacteristic = await service.getCharacteristic(COMMAND_CHARACTERISTIC_UUID);
+            diagnosticsCharacteristic = await service.getCharacteristic(DIAGNOSTICS_CHARACTERISTIC_UUID);
 
             console.log('Characteristics discovered');
             bleStatusIndicator.className = "wifi-status connected";
