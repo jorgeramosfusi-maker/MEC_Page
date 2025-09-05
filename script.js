@@ -147,7 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log('Requesting Bluetooth device...');
             bleStatusText.textContent = 'Requesting...';
             device = await navigator.bluetooth.requestDevice({
-                filters: [{ services: [SERVICE_UUID] }]
+                filters: [{ name: 'TailiftLogger_1234' }]
             });
 
             console.log('Device found:', device.name);
