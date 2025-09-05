@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Tail Lift BLE Monitor</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="header">
+    <div class="header-left">
+      <h1>Tail Lift Monitor</h1>
+      <div class="status-bar">
+        <span class="current-datetime" id="headerDateTime">N/A</span>
+        <span class="wifi-status disconnected" id="bleStatusIndicator">
+          <svg viewBox="0 0 20 20"><path d="M0 4.545c3.868 0 7.431 1.562 10 4.125C12.569 6.107 16.132 4.545 20 4.545v2.727c-2.89 0-5.625 1.17-7.652 3.093l-2.348 2.24-2.348-2.24C5.625 8.442 2.89 7.272 0 7.272V4.545zm0 6.364c2.182 0 4.242.886 5.714 2.348l4.286 4.125 4.286-4.125c1.472-1.462 3.532-2.348 5.714-2.348v2.727c-1.455 0-2.818.585-3.81 1.575L10 19.09l-2.19-2.102c-.992-.99-2.355-1.575-3.81-1.575v-2.728zM10 20l-1.125-.99a1.5 1.5 0 112.25 0L10 20z"/></svg>
+          <span id="bleStatusText">Offline</span>
+        </span>
+      </div>
+    </div>
+    <div>
+        <button class="connect-button" id="connectButton">Connect to Logger</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="monitor-group">
+      <h3>Tail Lift Unit</h3>
+      <table class="unit-info-table">
+        <tr><td class="unit-info-label">Serial Number:</td><td id="serialNumber">N/A</td></tr>
+        <tr><td class="unit-info-label">Model:</td><td id="tailLiftModel">N/A</td></tr>
+        <tr><td class="unit-info-label">SWL (Lb):</td><td id="swlDisplay">N/A</td></tr>
+        <tr><td class="unit-info-label">Total Cycles:</td><td id="liftCycles">N/A</td></tr>
+        <tr><td class="unit-info-label">Firmware:</td><td id="firmwareVersion">N/A</td></tr>
+        <tr><td class="unit-info-label">Unit Status:</td><td id="unitStatus">Disconnected</td></tr>
+      </table>
+    </div>
+
+    <div class="monitor-group">
+      <h3>Battery Health</h3>
+      <div class="gauge-container">
+        <div class="gauge" id="batteryGauge">
+          <div class="gauge-center">
+            <span class="gauge-value" id="batteryValue">--</span><span class="gauge-unit">%</span>
+          </div>
+        </div>
+        <span class="gauge-label">State of Charge (SoC)</span>
+      </div>
+      <table class="data-table">
+        <tr><td>Status</td><td id="batteryStatus">N/A</td></tr>
+        <tr><td>Voltage (V)</td><td id="batteryVoltage">N/A</td></tr>
+        <tr><td>Current (A)</td><td id="batteryCurrent">N/A</td></tr>
+      </table>
+    </div>
+
+    <div class="monitor-group">
+      <h3>Work Monitor</h3>
+      <div class="gauge-container">
+        <div class="gauge" id="platformLoadGauge">
+          <div class="gauge-center">
+            <span class="gauge-value" id="platformLoadValue">--</span>
+          </div>
+        </div>
+        <span class="gauge-label">Platform Load (Lb)</span>
+      </div>
+      <table class="data-table">
+        <tr><td>Cycle Status</td><td id="cycleStatusValue">Idle</td></tr>
+        <tr><td>Avg Load Life (lb)</td><td id="avgLoadLife">N/A</td></tr>
+        <tr><td>Total Work Life (Wh)</td><td id="workLife">N/A</td></tr>
+      </table>
+    </div>
+
+    <div class="monitor-group">
+      <h3>Alarm Log</h3>
+      <table class="alarm-table" id="alarmTable">
+        <thead><tr><th>Time</th><th>Alarm</th><th>Cycle</th><th>Type</th><th>Max Load</th></tr></thead>
+        <tbody><tr><td colspan="5" style="text-align:center;">No Alarms</td></tr></tbody>
+      </table>
+    </div>
+
+    <div class="monitor-group">
+        <h3>Device Controls</h3>
+        <button class="download-button" id="getLogButton">Get Log File</button>
+        <button class="reset-alarms-button" id="clearLogsButton">Clear All Logs</button>
+    </div>
+
+    <div class="monitor-group log-display">
+        <h3>Log File Data</h3>
+        <textarea id="logData" readonly></textarea>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,202 @@
+/* --- General Body and Font Styles --- */
+html {
+  font-family: -apple-system, BlinkMacMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  display: inline-block;
+  margin: 0px auto;
+  text-align: center;
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  background-color: #121212;
+  color: #EAEAEA;
+}
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+/* --- Header and Navigation --- */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #1c1c1e;
+  border-bottom: 1px solid #333;
+  flex-wrap: wrap; /* Allow content to wrap on smaller screens */
+}
+.header-left {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+h1 {
+  color: #EAEAEA;
+  font-size: 20px;
+  margin: 0;
+}
+.status-bar {
+    display: flex;
+    align-items: center;
+    margin-top: 5px;
+}
+.current-datetime {
+  font-size: 14px;
+  color: #aaa;
+}
+.wifi-status { /* Renamed to .ble-status in spirit, but class name kept for style reuse */
+    font-size: 12px;
+    margin-left: 10px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+}
+.wifi-status.connected {
+    color: #1c1c1e;
+    background-color: #007bff; /* Blue for connected */
+    font-weight: bold;
+}
+.wifi-status.disconnected {
+    color: #EAEAEA;
+    background-color: #555;
+}
+.wifi-status svg {
+    width: 14px;
+    height: 14px;
+    margin-right: 4px;
+    fill: currentColor;
+}
+.connect-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.connect-button:hover {
+  background-color: #0056b3;
+}
+.connect-button:disabled {
+    background-color: #555;
+    cursor: not-allowed;
+}
+
+
+/* --- Main Layout Container --- */
+.container {
+  display: grid; grid-template-columns: 1fr; gap: 15px; padding: 15px;
+}
+@media (min-width: 800px) { .container { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 1200px) { .container { grid-template-columns: 1fr 1fr 1fr; } }
+
+/* --- Card Style for Monitor Groups --- */
+.monitor-group {
+  background-color: #1c1c1e; border-radius: 12px;
+  padding: 15px 20px; text-align: left; border: 1px solid #333;
+}
+.monitor-group h3 {
+  font-size: 16px; color: #FFFFFF; margin-top: 0;
+  margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #444;
+}
+
+/* --- Circular Gauge Styles --- */
+.gauge-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.gauge {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: conic-gradient(#4CAF50 0deg, #333 0deg);
+  transition: background 0.5s;
+  transform: scaleX(-1);
+}
+.gauge-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scaleX(-1);
+  width: 110px;
+  height: 110px;
+  background-color: #1c1c1e; /* Match card background */
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.gauge-value {
+  font-size: 2.2em;
+  font-weight: bold;
+  color: #fff;
+}
+.gauge-unit {
+  font-size: 1.5em;
+  font-weight: normal;
+  color: #fff;
+}
+.gauge-label {
+  font-size: 0.9em;
+  color: #aaa;
+  margin-top: 10px; /* Space between gauge and label */
+}
+
+.data-table, .unit-info-table, .alarm-table { width: 100%; border-collapse: collapse; }
+.data-table th, .data-table td, .unit-info-table td, .alarm-table th, .alarm-table td {
+  padding: 8px 4px; text-align: left; font-size: 14px; border-bottom: 1px solid #2a2a2a;
+}
+tr:last-child td { border-bottom: none; }
+.unit-info-label { color: #ccc; }
+.alarm-table th { color: #888; text-transform: uppercase; font-size: 12px; }
+.high-load-alarm-bg { background-color: #F9A825; color: black; }
+.overload-alarm-bg { background-color: #D32F2F; color: white; }
+.reset-alarms-button, .download-button {
+  background-color: #007bff; color: white; border: none; padding: 10px 15px;
+  text-align: center; text-decoration: none; display: inline-block;
+  font-size: 14px; border-radius: 8px; cursor: pointer; margin-top: 15px;
+  transition: background-color 0.2s;
+}
+.reset-alarms-button { background-color: #444; }
+.reset-alarms-button:hover { background-color: #555; }
+.download-button:hover { background-color: #0056b3; }
+
+.status-charging { color: #4CAF50; font-weight: bold; }
+.status-discharging { color: #F9A825; font-weight: bold; }
+.status-idle { color: #aaa; }
+.status-error { color: #D32F2F; font-weight: bold; }
+
+/* --- Unit Status Styles --- */
+.status-ok { color: #4CAF50; font-weight: bold; }
+.status-warn { font-weight: bold; } /* Parent span for the link */
+.status-warn a, .status-warn a:visited {
+    text-decoration: underline;
+    cursor: pointer;
+    color: #F9A825;
+}
+
+/* --- Log Display --- */
+.log-display {
+    grid-column: 1 / -1; /* Span all columns */
+}
+#logData {
+    width: 100%;
+    height: 300px;
+    background-color: #101010;
+    border: 1px solid #333;
+    color: #EAEAEA;
+    font-family: "Courier New", Courier, monospace;
+    font-size: 12px;
+    border-radius: 8px;
+    padding: 10px;
+}
