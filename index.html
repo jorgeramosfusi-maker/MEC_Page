@@ -82,11 +82,14 @@
         <h3>Device Controls</h3>
         <button class="download-button" id="getLogButton">Get Log File</button>
         <button class="reset-alarms-button" id="clearLogsButton">Clear All Logs</button>
+        <br><br>
+        <button class="download-button" id="updateFirmwareButton">Update Firmware</button>
+        <input type="file" id="firmwareFile" accept=".bin" style="display: none;">
     </div>
 
     <div class="monitor-group log-display">
         <h3>Log File Data</h3>
-        <textarea id="logData" readonly></textarea>
+        <p>Click "Get Log File" to download the log as a .csv file.</p>
     </div>
   </div>
 
